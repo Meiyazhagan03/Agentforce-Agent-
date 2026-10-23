@@ -186,7 +186,7 @@ subagent retention_offer:
                 set @variables.offer_presented = True
             apply_offer: @actions.apply_retention_offer
                 description: "Apply the offer the customer just accepted. Only after the offer was presented and the customer clearly said yes."
-                available when @variables.offer_presented == True and @variables.retention_offer_id != ""
+                available when @variables.offer_type == "Downgrade" or @variables.offer_type == "Discount"
                 with subscriptionId = @variables.subscription_id
                 with retentionOfferId = @variables.retention_offer_id
                 with customerConfirmed = ...
@@ -199,7 +199,7 @@ subagent retention_offer:
                 set @variables.cancel_insisted = True
             go_cancel: @utils.transition to @subagent.cancellation_request
                 description: "Customer declined the offer, the reason is Business closing, or the customer clearly insists on cancelling."
-                available when @variables.offer_presented == True or @variables.offer_declined == True or @variables.reason == "Business closing" or @variables.cancel_insisted == True
+                available when @variables.offer_type == "Downgrade" or @variables.offer_type == "Discount" or @variables.offer_declined == True or @variables.reason == "Business closing" or @variables.cancel_insisted == True
             go_human: @utils.transition to @subagent.human_escalation
                 description: "Policy requires escalation, or the customer asks for a person, is angry, or mentions legal action."
 
