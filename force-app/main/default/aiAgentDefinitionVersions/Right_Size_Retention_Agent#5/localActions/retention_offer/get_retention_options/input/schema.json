@@ -1,0 +1,28 @@
+{
+  "required" : [ "subscriptionId", "reason" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "customerMessage" : {
+      "title" : "Customer Message",
+      "description" : "The customer's own words about why they want to leave.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "reason" : {
+      "title" : "Reason",
+      "description" : "Exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "subscriptionId" : {
+      "title" : "Subscription Id",
+      "description" : "Internal subscription id from verification.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

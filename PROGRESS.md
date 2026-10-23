@@ -6,6 +6,6 @@
 | 3 Permission set + seed data | Done | Retention_Agent_Access assigned to admin (agent user assignment by user). scripts/apex/seed-data.apex run: 4 plans/5 accounts/5 contacts/5 subs/15 usage. All 5 outcomes verified with scripts/apex/verify-outcomes.apex. Re-run verified idempotent (same counts and outcomes). PermissionSetAssignment confirmed for admin and retention.agent.2026@agentforce.com |
 | 4 Agent built (Path A/B) | Done (Path A) | Authoring bundle Right_Size_Retention_Agent validates; draft deployed. Root causes fixed: (1) every turn restarts at agent_router, so routing is now deterministic from variables; (2) tool alias `escalate` collided with the built-in escalate, renamed `create_case`; (3) not-found lookup left subscription_id non-empty, now gated on `verified`; (4) agent user cannot create Tasks (Einstein Agent license), Apply tries the Task best-effort and cancellation request now creates a Case; (5) permission set gained Case field access + EditTask. Not published, not activated |
 | 5 Testing | Done via CLI live preview | Tests 1-10 pass against live actions (preview start/send, transcripts in git-ignored .sfdx/agents and transcripts/). 35/35 Apex tests, 98% coverage. Builder Live Test needs Commit Version of the latest draft before re-checking |
-| 6 Activation | | |
+| 6 Activation | Published, NOT activated | `sf agent publish authoring-bundle` succeeded (BotVersion 5, Inactive). Awaiting user approval and review in Builder before `sf agent activate` |
 | 7 Video recorded | | |
 | 8 Post + form submitted | | |

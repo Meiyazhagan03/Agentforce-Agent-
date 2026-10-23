@@ -1,0 +1,35 @@
+{
+  "required" : [ "subscriptionId", "reason", "customerConfirmed" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "customerConfirmed" : {
+      "title" : "Customer Confirmed",
+      "description" : "True ONLY if the customer has just explicitly confirmed they want to proceed. Otherwise False.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "customerMessage" : {
+      "title" : "Customer Message",
+      "description" : "The customer's own words.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "reason" : {
+      "title" : "Reason",
+      "description" : "Exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "subscriptionId" : {
+      "title" : "Subscription Id",
+      "description" : "Internal subscription id.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

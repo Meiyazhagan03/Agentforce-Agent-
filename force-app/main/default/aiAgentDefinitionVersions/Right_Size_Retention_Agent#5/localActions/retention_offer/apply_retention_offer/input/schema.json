@@ -1,0 +1,28 @@
+{
+  "required" : [ "subscriptionId", "retentionOfferId", "customerConfirmed" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "customerConfirmed" : {
+      "title" : "Customer Confirmed",
+      "description" : "True ONLY if the customer has just clearly said yes to this exact offer. Otherwise False.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "retentionOfferId" : {
+      "title" : "Retention Offer Id",
+      "description" : "Internal offer id from Get Retention Options.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "subscriptionId" : {
+      "title" : "Subscription Id",
+      "description" : "Internal subscription id.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

@@ -1,0 +1,28 @@
+{
+  "required" : [ "subscriptionId", "reason", "conversationSummary" ],
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "conversationSummary" : {
+      "title" : "Conversation Summary",
+      "description" : "3 to 5 sentences: who the customer is, their plan, why they want to leave, what was offered, and what they said.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "reason" : {
+      "title" : "Reason",
+      "description" : "Why this is being escalated, in a few words.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    },
+    "subscriptionId" : {
+      "title" : "Subscription Id",
+      "description" : "Internal subscription id.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isUserInput" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

@@ -1,0 +1,94 @@
+{
+  "unevaluatedProperties" : false,
+  "properties" : {
+    "discountMonths" : {
+      "title" : "Discount Months",
+      "description" : "How many months the discount lasts.",
+      "lightning:type" : "lightning__integerType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "discountPercent" : {
+      "title" : "Discount Percent",
+      "description" : "Discount percent, if the offer is a discount.",
+      "lightning:type" : "lightning__numberType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "escalationReason" : {
+      "title" : "Escalation Reason",
+      "description" : "Internal note. Do not read it to the customer.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : false
+    },
+    "explanation" : {
+      "title" : "Explanation",
+      "description" : "Customer-safe wording for the offer. Base your reply on this.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "monthlySavings" : {
+      "title" : "Monthly Savings",
+      "description" : "Dollars saved per month. Quote exactly.",
+      "lightning:type" : "lightning__numberType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "newMonthlyPrice" : {
+      "title" : "New Monthly Price",
+      "description" : "Price per month after the offer, in dollars. Quote exactly.",
+      "lightning:type" : "lightning__numberType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "offerType" : {
+      "title" : "Offer Type",
+      "description" : "Downgrade, Discount, Escalation or None. Only offer what this says.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "proposedPlanId" : {
+      "title" : "Proposed Plan Id",
+      "description" : "Internal. Never show to the customer.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : false
+    },
+    "proposedPlanName" : {
+      "title" : "Proposed Plan Name",
+      "description" : "Name of the plan being offered, if any.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "requiresEscalation" : {
+      "title" : "Requires Escalation",
+      "description" : "If true, do not make an offer. Hand off to human escalation.",
+      "lightning:type" : "lightning__booleanType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : true
+    },
+    "retentionOfferId" : {
+      "title" : "Retention Offer Id",
+      "description" : "Internal. Never show to the customer.",
+      "lightning:type" : "lightning__textType",
+      "lightning:isPII" : false,
+      "copilotAction:isDisplayable" : false,
+      "copilotAction:isUsedByPlanner" : false
+    }
+  },
+  "lightning:type" : "lightning__objectType"
+}

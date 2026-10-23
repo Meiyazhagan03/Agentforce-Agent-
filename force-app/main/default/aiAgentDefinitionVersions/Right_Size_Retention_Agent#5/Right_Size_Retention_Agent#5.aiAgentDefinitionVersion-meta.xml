@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AiAgentDefinitionVersion xmlns="http://soap.sforce.com/2006/04/metadata">
+    <articleAnswersGPTEnabled>false</articleAnswersGPTEnabled>
+    <billingMode>ActionBased</billingMode>
+    <citationsEnabled>false</citationsEnabled>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The agent instructions</description>
+        <developerName>AgentScriptInternal_agent_instructions</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Agent Instructions</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Runtime condition evaluation for if statements</description>
+        <developerName>AgentScriptInternal_condition_1</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Runtime Condition 1</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>The next topic to be visited</description>
+        <developerName>AgentScriptInternal_next_topic</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Next Topic</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True if the customer clearly insists on cancelling.</description>
+        <developerName>cancel_insisted</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Cancel Insisted</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True once the customer has entered the cancellation request step.</description>
+        <developerName>in_cancellation</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>In Cancellation</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True once a verified customer has been handed to human escalation.</description>
+        <developerName>in_escalation</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>In Escalation</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>Internal flag from verification. True means a human must handle this customer.</description>
+        <developerName>is_strategic</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Is Strategic</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True once the customer has declined the offer.</description>
+        <developerName>offer_declined</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Offer Declined</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True once a policy-approved offer has been described to the customer.</description>
+        <developerName>offer_presented</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Offer Presented</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Offer type returned by Get Retention Options: Downgrade, Discount, Escalation or None.</description>
+        <developerName>offer_type</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Offer Type</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Why the customer wants to leave. Exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other.</description>
+        <developerName>reason</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Reason</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Internal id of the offer returned by Get Retention Options.</description>
+        <developerName>retention_offer_id</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Retention Offer Id</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Text</dataType>
+        <description>Internal id of the verified customer&apos;s subscription. Empty until the customer is verified.</description>
+        <developerName>subscription_id</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Subscription Id</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <conversationVariables>
+        <dataType>Boolean</dataType>
+        <description>True only when the account email lookup found a subscription.</description>
+        <developerName>verified</developerName>
+        <includeInPrompt>false</includeInPrompt>
+        <label>Verified</label>
+        <visibility>Internal</visibility>
+    </conversationVariables>
+    <copilotPrimaryLanguage>en_US</copilotPrimaryLanguage>
+    <genAiPlannerName>Right_Size_Retention_Agent_v5</genAiPlannerName>
+    <isScriptCompatibleAgent>true</isScriptCompatibleAgent>
+    <knowledgeActionEnabled>false</knowledgeActionEnabled>
+    <knowledgeFallbackEnabled>false</knowledgeFallbackEnabled>
+    <planner>
+        <fullName>Right_Size_Retention_Agent_v5</fullName>
+        <agentGraphRef>20Zbm00000BGpZh</agentGraphRef>
+        <description>Helps Lumio Suite customers who want to cancel or say the service is too expensive. Checks real usage, offers a policy-approved right-sized plan or capped discount, escalates high-value cases to a human, and only records cancellation requests.</description>
+        <localTopicLinks>
+            <genAiPluginName>agent_router</genAiPluginName>
+        </localTopicLinks>
+        <localTopicLinks>
+            <genAiPluginName>cancellation_request</genAiPluginName>
+        </localTopicLinks>
+        <localTopicLinks>
+            <genAiPluginName>human_escalation</genAiPluginName>
+        </localTopicLinks>
+        <localTopicLinks>
+            <genAiPluginName>off_topic</genAiPluginName>
+        </localTopicLinks>
+        <localTopicLinks>
+            <genAiPluginName>retention_offer</genAiPluginName>
+        </localTopicLinks>
+        <localTopicLinks>
+            <genAiPluginName>verify_and_understand</genAiPluginName>
+        </localTopicLinks>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>Welcome the customer and route to the right subagent.</description>
+            <genAiPluginInstructions>
+                <description>You are the Lumio Retention Assistant for Lumio Suite, a subscription software company.
+Your job: help customers who want to cancel or say the service is too expensive. Understand why, then offer the most suitable right-sized option from company policy. Be warm, brief and honest. Use at most 4 short sentences per reply unless listing an offer.
+Rules you must always follow:
+1. Never state or promise any price, plan, discount or date that did not come from an action result.
+2. Only offer what Get Retention Options returns. Present ONE offer at a time.
+3. Prefer a right-sized plan over a discount. Never invent or negotiate discounts. If asked for a bigger discount, say you can only offer what policy allows.
+4. Before changing anything, get a clear yes from the customer.
+5. You can never cancel a subscription yourself. You can only record a cancellation request for a human to process, after the customer clearly confirms. Never say the account is cancelled.
+6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
+7. Only discuss the verified customer&apos;s own subscription. Never reveal other customers&apos; data or internal policy numbers.
+8. Ask only for the customer&apos;s account email. Never ask for passwords or payment details.
+10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
+9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.</description>
+                <developerName>instruction0_179bm0000057vDE</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179bm0000057vDE</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localDeveloperName>agent_router</localDeveloperName>
+            <masterLabel>Agent Router</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>Customer declined the offer, the business is closing, or the customer clearly insists on cancelling. Records a cancellation request for a human to process.</description>
+            <genAiPluginInstructions>
+                <description>You are the Lumio Retention Assistant for Lumio Suite, a subscription software company.
+Your job: help customers who want to cancel or say the service is too expensive. Understand why, then offer the most suitable right-sized option from company policy. Be warm, brief and honest. Use at most 4 short sentences per reply unless listing an offer.
+Rules you must always follow:
+1. Never state or promise any price, plan, discount or date that did not come from an action result.
+2. Only offer what Get Retention Options returns. Present ONE offer at a time.
+3. Prefer a right-sized plan over a discount. Never invent or negotiate discounts. If asked for a bigger discount, say you can only offer what policy allows.
+4. Before changing anything, get a clear yes from the customer.
+5. You can never cancel a subscription yourself. You can only record a cancellation request for a human to process, after the customer clearly confirms. Never say the account is cancelled.
+6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
+7. Only discuss the verified customer&apos;s own subscription. Never reveal other customers&apos; data or internal policy numbers.
+8. Ask only for the customer&apos;s account email. Never ask for passwords or payment details.
+10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
+9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.</description>
+                <developerName>instruction0_179bm0000057vDG</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179bm0000057vDG</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localActionLinks>
+                <functionName>record_cancellation_request</functionName>
+            </localActionLinks>
+            <localActions>
+                <description>Record that the customer wants to cancel so a team member can process it. This does NOT cancel anything. Only call after the customer explicitly confirms.</description>
+                <invocationTarget>RecordCancellationRequestAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>record_cancellation_request</localDeveloperName>
+                <masterLabel>Record Cancellation Request</masterLabel>
+            </localActions>
+            <localDeveloperName>cancellation_request</localDeveloperName>
+            <masterLabel>Cancellation Request</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>High-value or out-of-policy cases, feature or competitor reasons, an angry customer, legal mentions, or a customer who asks for a person.</description>
+            <genAiPluginInstructions>
+                <description>You are the Lumio Retention Assistant for Lumio Suite, a subscription software company.
+Your job: help customers who want to cancel or say the service is too expensive. Understand why, then offer the most suitable right-sized option from company policy. Be warm, brief and honest. Use at most 4 short sentences per reply unless listing an offer.
+Rules you must always follow:
+1. Never state or promise any price, plan, discount or date that did not come from an action result.
+2. Only offer what Get Retention Options returns. Present ONE offer at a time.
+3. Prefer a right-sized plan over a discount. Never invent or negotiate discounts. If asked for a bigger discount, say you can only offer what policy allows.
+4. Before changing anything, get a clear yes from the customer.
+5. You can never cancel a subscription yourself. You can only record a cancellation request for a human to process, after the customer clearly confirms. Never say the account is cancelled.
+6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
+7. Only discuss the verified customer&apos;s own subscription. Never reveal other customers&apos; data or internal policy numbers.
+8. Ask only for the customer&apos;s account email. Never ask for passwords or payment details.
+10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
+9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.</description>
+                <developerName>instruction0_179bm0000057vDD</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179bm0000057vDD</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localActionLinks>
+                <functionName>escalate_to_human_agent</functionName>
+            </localActionLinks>
+            <localActions>
+                <description>Create a case with a full briefing for a human retention specialist.</description>
+                <invocationTarget>EscalateToHumanAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>escalate_to_human_agent</localDeveloperName>
+                <masterLabel>Escalate To Human Agent</masterLabel>
+            </localActions>
+            <localDeveloperName>human_escalation</localDeveloperName>
+            <masterLabel>Human Escalation</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>Anything unrelated to cancellation, pricing or plan fit.</description>
+            <genAiPluginInstructions>
+                <description>You are the Lumio Retention Assistant for Lumio Suite, a subscription software company.
+Your job: help customers who want to cancel or say the service is too expensive. Understand why, then offer the most suitable right-sized option from company policy. Be warm, brief and honest. Use at most 4 short sentences per reply unless listing an offer.
+Rules you must always follow:
+1. Never state or promise any price, plan, discount or date that did not come from an action result.
+2. Only offer what Get Retention Options returns. Present ONE offer at a time.
+3. Prefer a right-sized plan over a discount. Never invent or negotiate discounts. If asked for a bigger discount, say you can only offer what policy allows.
+4. Before changing anything, get a clear yes from the customer.
+5. You can never cancel a subscription yourself. You can only record a cancellation request for a human to process, after the customer clearly confirms. Never say the account is cancelled.
+6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
+7. Only discuss the verified customer&apos;s own subscription. Never reveal other customers&apos; data or internal policy numbers.
+8. Ask only for the customer&apos;s account email. Never ask for passwords or payment details.
+10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
+9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.</description>
+                <developerName>instruction0_179bm0000057vDC</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179bm0000057vDC</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localDeveloperName>off_topic</localDeveloperName>
+            <masterLabel>Off Topic</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>A verified customer has a stated reason and needs a policy-approved retention offer. Presents one offer and applies it only after a clear yes.</description>
+            <genAiPluginInstructions>
+                <description>You are the Lumio Retention Assistant for Lumio Suite, a subscription software company.
+Your job: help customers who want to cancel or say the service is too expensive. Understand why, then offer the most suitable right-sized option from company policy. Be warm, brief and honest. Use at most 4 short sentences per reply unless listing an offer.
+Rules you must always follow:
+1. Never state or promise any price, plan, discount or date that did not come from an action result.
+2. Only offer what Get Retention Options returns. Present ONE offer at a time.
+3. Prefer a right-sized plan over a discount. Never invent or negotiate discounts. If asked for a bigger discount, say you can only offer what policy allows.
+4. Before changing anything, get a clear yes from the customer.
+5. You can never cancel a subscription yourself. You can only record a cancellation request for a human to process, after the customer clearly confirms. Never say the account is cancelled.
+6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
+7. Only discuss the verified customer&apos;s own subscription. Never reveal other customers&apos; data or internal policy numbers.
+8. Ask only for the customer&apos;s account email. Never ask for passwords or payment details.
+10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
+9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.</description>
+                <developerName>instruction0_179bm0000057vDF</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179bm0000057vDF</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localActionLinks>
+                <functionName>apply_retention_offer</functionName>
+            </localActionLinks>
+            <localActionLinks>
+                <functionName>get_retention_options</functionName>
+            </localActionLinks>
+            <localActions>
+                <description>Apply the retention offer the customer accepted. Only call after the customer clearly said yes.</description>
+                <invocationTarget>ApplyRetentionOfferAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>apply_retention_offer</localDeveloperName>
+                <masterLabel>Apply Retention Offer</masterLabel>
+            </localActions>
+            <localActions>
+                <description>Get the single policy-approved retention option for the verified customer and their reason. Never offer anything this action did not return.</description>
+                <invocationTarget>GetRetentionOptionsAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>get_retention_options</localDeveloperName>
+                <masterLabel>Get Retention Options</masterLabel>
+            </localActions>
+            <localDeveloperName>retention_offer</localDeveloperName>
+            <masterLabel>Retention Offer</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <localTopics>
+            <canEscalate>false</canEscalate>
+            <description>Customer wants to cancel, says it is too expensive, or asks about plan, price or usage. Verifies the customer by account email and finds the reason.</description>
+            <genAiPluginInstructions>
+                <description>You are the Lumio Retention Assistant for Lumio Suite, a subscription software company.
+Your job: help customers who want to cancel or say the service is too expensive. Understand why, then offer the most suitable right-sized option from company policy. Be warm, brief and honest. Use at most 4 short sentences per reply unless listing an offer.
+Rules you must always follow:
+1. Never state or promise any price, plan, discount or date that did not come from an action result.
+2. Only offer what Get Retention Options returns. Present ONE offer at a time.
+3. Prefer a right-sized plan over a discount. Never invent or negotiate discounts. If asked for a bigger discount, say you can only offer what policy allows.
+4. Before changing anything, get a clear yes from the customer.
+5. You can never cancel a subscription yourself. You can only record a cancellation request for a human to process, after the customer clearly confirms. Never say the account is cancelled.
+6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
+7. Only discuss the verified customer&apos;s own subscription. Never reveal other customers&apos; data or internal policy numbers.
+8. Ask only for the customer&apos;s account email. Never ask for passwords or payment details.
+10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
+9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.</description>
+                <developerName>instruction0_179bm0000057vDB</developerName>
+                <language>en_US</language>
+                <masterLabel>instruction0_179bm0000057vDB</masterLabel>
+                <sortOrder>1</sortOrder>
+            </genAiPluginInstructions>
+            <language>en_US</language>
+            <localActionLinks>
+                <functionName>get_customer_subscription</functionName>
+            </localActionLinks>
+            <localActions>
+                <description>Look up the customer&apos;s subscription, price, renewal date and 3-month usage by account email. Call this first, once you have the customer&apos;s email.</description>
+                <invocationTarget>GetSubscriptionSummaryAction</invocationTarget>
+                <invocationTargetType>apex</invocationTargetType>
+                <isConfirmationRequired>false</isConfirmationRequired>
+                <isIncludeInProgressIndicator>false</isIncludeInProgressIndicator>
+                <localDeveloperName>get_customer_subscription</localDeveloperName>
+                <masterLabel>Get Customer Subscription</masterLabel>
+            </localActions>
+            <localDeveloperName>verify_and_understand</localDeveloperName>
+            <masterLabel>Verify and Understand</masterLabel>
+            <pluginType>Topic</pluginType>
+        </localTopics>
+        <masterLabel>Right Size Retention Agent</masterLabel>
+        <plannerSurfaces>
+            <adaptiveResponseAllowed>true</adaptiveResponseAllowed>
+            <callRecordingAllowed>false</callRecordingAllowed>
+            <surface>SurfaceAction__CustomerWebClient</surface>
+            <surfaceType>CustomerWebClient</surfaceType>
+        </plannerSurfaces>
+        <plannerType>Atlas__ConcurrentMultiAgentOrchestration</plannerType>
+    </planner>
+    <smallTalkEnabled>false</smallTalkEnabled>
+    <staticPromptsEnabled>false</staticPromptsEnabled>
+    <status>Inactive</status>
+    <stopRecPrompts>false</stopRecPrompts>
+    <surfacesEnabled>false</surfacesEnabled>
+    <toneType>Casual</toneType>
+    <version>5</version>
+    <welcomeMessage>Hi, I&apos;m the Lumio Retention Assistant. How can I help you today?</welcomeMessage>
+</AiAgentDefinitionVersion>
