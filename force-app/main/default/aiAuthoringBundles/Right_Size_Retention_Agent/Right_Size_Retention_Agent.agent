@@ -169,10 +169,11 @@ subagent retention_offer:
                 | Policy says this needs a specialist. Hand off to human escalation now.
             if @variables.offer_type == "None":
                 | There is no offer for this customer. Say so kindly and ask whether they want to proceed with a cancellation request.
-            if (@variables.offer_type == "Downgrade" or @variables.offer_type == "Discount") and @variables.offer_presented == False:
-                | Explain the real finding, for example low usage, and present the single offer using the exact numbers and wording from Get Retention Options. Then call Mark Offer Presented and ask if they would like to accept.
-            if (@variables.offer_type == "Downgrade" or @variables.offer_type == "Discount") and @variables.offer_presented == True:
-                | The offer has been presented. If the customer clearly says yes, call Apply Retention Offer with customerConfirmed True and repeat the confirmation text. Set customerConfirmed True only right after an explicit yes. If they decline, call Mark Offer Declined. Never invent a different offer or discount.
+            if @variables.offer_type == "Downgrade" or @variables.offer_type == "Discount":
+                | An offer already exists from Get Retention Options. Look at the conversation so far.
+                  If you have NOT yet described the offer to the customer, describe it now using the exact numbers and wording from Get Retention Options, and ask if they would like to accept. Do not call apply_offer in that same reply.
+                  If you HAVE already described the offer and the customer's latest message is a clear yes to it, you MUST call the apply_offer tool now with customerConfirmed True. Do not describe the offer again and do not ask for confirmation again. After the tool returns success, repeat its confirmation text. If it returns success false, tell the customer honestly and offer a specialist.
+                  If they decline, move on to the cancellation request. Never invent a different offer or discount.
         actions:
             get_options: @actions.get_retention_options
                 with subscriptionId = @variables.subscription_id
