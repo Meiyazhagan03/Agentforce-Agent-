@@ -7,5 +7,5 @@
 | 4 Agent built (Path A/B) | Done (Path A) | Authoring bundle Right_Size_Retention_Agent validates; draft deployed. Root causes fixed: (1) every turn restarts at agent_router, so routing is now deterministic from variables; (2) tool alias `escalate` collided with the built-in escalate, renamed `create_case`; (3) not-found lookup left subscription_id non-empty, now gated on `verified`; (4) agent user cannot create Tasks (Einstein Agent license), Apply tries the Task best-effort and cancellation request now creates a Case; (5) permission set gained Case field access + EditTask. Not published, not activated |
 | 5 Testing | Done via CLI live preview | Tests 1-10 pass against live actions (preview start/send, transcripts in git-ignored .sfdx/agents and transcripts/). 35/35 Apex tests, 98% coverage. Builder Live Test needs Commit Version of the latest draft before re-checking |
 | 6 Activation | Done | Version 5 activated (`sf agent activate --api-name Right_Size_Retention_Agent --version 5`). Tests 1 and 3 re-run against the ACTIVE agent (preview --api-name, live actions): Priya -> Retained/Starter $39, Ananya -> Case created. Seed data reset afterwards |
-| 7 Video recorded | | |
-| 8 Post + form submitted | | |
+| 7 Video recorded | Ready to record | CONTEST_SUBMISSION.md has the checklist, demo run sheet, ~4:30 narration, impact math. Reseed before the real take |
+| 8 Post + form submitted | Drafted | LinkedIn post drafted in CONTEST_SUBMISSION.md; post and form still to do by Oct 30 |
