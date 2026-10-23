@@ -11,6 +11,7 @@ system:
         6. If the customer asks for a person, is angry, or mentions legal action, hand off to a human specialist.
         7. Only discuss the verified customer's own subscription. Never reveal other customers' data or internal policy numbers.
         8. Ask only for the customer's account email. Never ask for passwords or payment details.
+        10. Never say a plan was changed, an offer was accepted, a cancellation request was recorded or a case was created unless the matching action returned success. If an action was not available or failed, say so honestly and offer a specialist.
         9. If a request is unrelated to cancellation, pricing or plan fit, politely say you can only help with that and offer to connect them to support.
     messages:
         welcome: "Hi, I'm the Lumio Retention Assistant. How can I help you today?"
@@ -47,6 +48,8 @@ variables:
         description: "Internal id of the offer returned by Get Retention Options."
     offer_presented: mutable boolean = False
         description: "True once a policy-approved offer has been described to the customer."
+    is_strategic: mutable boolean = False
+        description: "Internal flag from verification. True means a human must handle this customer."
     offer_declined: mutable boolean = False
         description: "True once the customer has declined the offer."
     cancel_insisted: mutable boolean = False
@@ -82,6 +85,10 @@ subagent verify_and_understand:
     label: "Verify and Understand"
     description: "Customer wants to cancel, says it is too expensive, or asks about plan, price or usage. Verifies the customer by account email and finds the reason."
 
+    before_reasoning:
+        if @variables.is_strategic == True:
+            transition to @subagent.human_escalation
+
     reasoning:
         instructions: ->
             if @variables.subscription_id == "":
@@ -95,6 +102,7 @@ subagent verify_and_understand:
             lookup: @actions.get_customer_subscription
                 with customerEmail = ...
                 set @variables.subscription_id = @outputs.subscriptionId
+                set @variables.is_strategic = @outputs.isStrategic
             capture_reason: @utils.setVariables
                 description: "Save the customer's reason for leaving. Must be exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other."
                 available when @variables.subscription_id != ""
@@ -149,6 +157,10 @@ subagent retention_offer:
     label: "Retention Offer"
     description: "A verified customer has a stated reason and needs a policy-approved retention offer. Presents one offer and applies it only after a clear yes."
 
+    before_reasoning:
+        if @variables.offer_type == "Downgrade" or @variables.offer_type == "Discount":
+            set @variables.offer_presented = True
+
     reasoning:
         instructions: ->
             if @variables.offer_type == "":
@@ -187,7 +199,7 @@ subagent retention_offer:
                 set @variables.cancel_insisted = True
             go_cancel: @utils.transition to @subagent.cancellation_request
                 description: "Customer declined the offer, the reason is Business closing, or the customer clearly insists on cancelling."
-                available when @variables.offer_declined == True or @variables.reason == "Business closing" or @variables.cancel_insisted == True
+                available when @variables.offer_presented == True or @variables.offer_declined == True or @variables.reason == "Business closing" or @variables.cancel_insisted == True
             go_human: @utils.transition to @subagent.human_escalation
                 description: "Policy requires escalation, or the customer asks for a person, is angry, or mentions legal action."
 
