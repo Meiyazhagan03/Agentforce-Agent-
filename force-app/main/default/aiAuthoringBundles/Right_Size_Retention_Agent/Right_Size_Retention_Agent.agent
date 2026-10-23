@@ -213,7 +213,8 @@ subagent retention_offer:
                     description: "Dollars saved per month. Quote exactly."
                 discountPercent: number
                     description: "Discount percent, if the offer is a discount."
-                discountMonths: number
+                discountMonths: object
+                    complex_data_type_name: "lightning__integerType"
                     description: "How many months the discount lasts."
                 requiresEscalation: boolean
                     description: "If true, do not make an offer. Hand off to human escalation."
