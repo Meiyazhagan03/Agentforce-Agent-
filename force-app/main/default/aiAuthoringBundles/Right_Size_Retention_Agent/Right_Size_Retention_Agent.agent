@@ -21,6 +21,7 @@ access:
 
 config:
     developer_name: "Right_Size_Retention_Agent"
+    agent_type: "AgentforceServiceAgent"
     agent_label: "Right Size Retention Agent"
     description: "Helps Lumio Suite customers who want to cancel or say the service is too expensive. Checks real usage, offers a policy-approved right-sized plan or capped discount, escalates high-value cases to a human, and only records cancellation requests."
 
@@ -52,6 +53,9 @@ variables:
     cancel_insisted: mutable boolean = False
         description: "True if the customer clearly insists on cancelling."
 
+connection customer_web_client:
+    adaptive_response_allowed: True
+
 language:
     default_locale: "en_US"
     additional_locales: ""
@@ -82,11 +86,11 @@ subagent verify_and_understand:
     reasoning:
         instructions: ->
             if @variables.subscription_id == "":
-                | Ask for the customer's account email, then call Get Customer Subscription.
+                | Ask for the customer's account email, then call the lookup tool (Get Customer Subscription).
                   If it is not found, ask once more for the email. If the second attempt is also not found, tell the customer a team member will follow up and stop. Do not hand off to human escalation because there is no verified subscription.
             else:
                 | The customer is verified. Briefly acknowledge their concern and mention their plan and usage using only action results.
-                  If the reason is not obvious, ask one short question. Then call Capture Reason with exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other.
+                  If the reason is not obvious, ask one short question. Then call the capture_reason tool with exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other.
                   Map cost complaints to Too expensive, and low usage to Not using enough. Once the reason is captured, move on to the retention offer.
         actions:
             lookup: @actions.get_customer_subscription
@@ -147,17 +151,18 @@ subagent retention_offer:
     reasoning:
         instructions: ->
             if @variables.offer_type == "":
-                | Call Get Retention Options now. Do not make any offer before it returns.
+                | Call the get_options tool (Get Retention Options) now. Do not make any offer before it returns.
             if @variables.offer_type == "Escalation":
                 | Policy says this needs a specialist. Hand off to human escalation now.
             if @variables.offer_type == "None":
                 | There is no offer for this customer. Say so kindly and ask whether they want to proceed with a cancellation request.
             if (@variables.offer_type == "Downgrade" or @variables.offer_type == "Discount") and @variables.offer_presented == False:
-                | Explain the real finding, for example low usage, and present the single offer using the exact numbers and wording from Get Retention Options. Then call Mark Offer Presented and ask if they would like to accept.
+                | Explain the real finding, for example low usage, and present the single offer using the exact numbers and wording from Get Retention Options. Then call the mark_presented tool and ask if they would like to accept.
             if (@variables.offer_type == "Downgrade" or @variables.offer_type == "Discount") and @variables.offer_presented == True:
-                | The offer has been presented. If the customer clearly says yes, call Apply Retention Offer with customerConfirmed True and repeat the confirmation text. Set customerConfirmed True only right after an explicit yes. If they decline, call Mark Offer Declined. Never invent a different offer or discount.
+                | The offer has been presented. If the customer clearly says yes, call the apply_offer tool (Apply Retention Offer) with customerConfirmed True and repeat the confirmation text. Set customerConfirmed True only right after an explicit yes. If they decline, call the mark_declined tool. Never invent a different offer or discount.
         actions:
             get_options: @actions.get_retention_options
+                available when @variables.offer_type == ""
                 with subscriptionId = @variables.subscription_id
                 with reason = @variables.reason
                 with customerMessage = ...
@@ -258,7 +263,7 @@ subagent cancellation_request:
     reasoning:
         instructions: ->
             | Confirm the customer really wants to proceed. Explain that a team member will complete the request and that nothing has been cancelled by you.
-              Call Record Cancellation Request only after an explicit yes, with customerConfirmed True. Afterwards say the request is recorded and a team member will follow up. Never say the account is cancelled.
+              Call the record_request tool (Record Cancellation Request) only after an explicit yes, with customerConfirmed True. Afterwards say the request is recorded and a team member will follow up. Never say the account is cancelled.
         actions:
             record_request: @actions.record_cancellation_request
                 with subscriptionId = @variables.subscription_id
@@ -299,7 +304,7 @@ subagent human_escalation:
             if @variables.subscription_id == "":
                 | The customer is not verified, so no case can be created. Tell them a team member will follow up, and ask for their account email if they have not given it yet.
             else:
-                | Write a 3 to 5 sentence summary: who the customer is, their plan, why they want to leave, what was offered, and what they said. Call Escalate to Human Agent with it, then share the case number and say a specialist will follow up.
+                | Write a 3 to 5 sentence summary: who the customer is, their plan, why they want to leave, what was offered, and what they said. Call the escalate tool (Escalate to Human Agent) with it, then share the case number and say a specialist will follow up.
         actions:
             escalate: @actions.escalate_to_human_agent
                 available when @variables.subscription_id != ""
