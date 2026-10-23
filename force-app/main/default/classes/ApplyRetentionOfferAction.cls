@@ -99,16 +99,26 @@ public with sharing class ApplyRetentionOfferAction {
             Last_Discount_Date__c = sub.Last_Discount_Date__c, Status__c = 'Retained'
         );
         update as user toUpdate;
-        update as user new Retention_Offer__c(Id = offer.Id, Status__c = 'Accepted');
-        insert as user new Task(
-            Subject = 'Retention offer accepted: send confirmation',
-            Description = r.confirmationText,
-            WhoId = sub.Contact__c,
-            WhatId = sub.Account__c,
-            ActivityDate = Date.today().addDays(1),
-            Status = 'Not Started',
-            Priority = 'Normal'
-        );
+        // Best effort: the Einstein Agent license cannot create Tasks, so a failure must not undo the change.
+        String offerNote = null;
+        try {
+            insert new Task(
+                Subject = 'Retention offer accepted: send confirmation',
+                Description = r.confirmationText,
+                WhoId = sub.Contact__c,
+                WhatId = sub.Account__c,
+                ActivityDate = Date.today().addDays(1),
+                Status = 'Not Started',
+                Priority = 'Normal'
+            );
+        } catch (Exception e) {
+            offerNote = 'Offer applied. Follow-up task could not be created for the agent user; send the confirmation manually.';
+        }
+        Retention_Offer__c accepted = new Retention_Offer__c(Id = offer.Id, Status__c = 'Accepted');
+        if (offerNote != null) {
+            accepted.Agent_Summary__c = offerNote;
+        }
+        update as user accepted;
         r.success = true;
         r.message = 'Retention offer applied.';
         r.newMonthlyPrice = p.newMonthlyPrice;

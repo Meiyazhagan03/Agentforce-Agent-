@@ -38,6 +38,8 @@ variables:
     EndUserLanguage: linked string
         source: @MessagingSession.EndUserLanguage
         description: "This variable may also be referred to as MessagingSession EndUserLanguage"
+    verified: mutable boolean = False
+        description: "True only when the account email lookup found a subscription."
     subscription_id: mutable string = ""
         description: "Internal id of the verified customer's subscription. Empty until the customer is verified."
     reason: mutable string = ""
@@ -48,6 +50,10 @@ variables:
         description: "Internal id of the offer returned by Get Retention Options."
     offer_presented: mutable boolean = False
         description: "True once a policy-approved offer has been described to the customer."
+    in_cancellation: mutable boolean = False
+        description: "True once the customer has entered the cancellation request step."
+    in_escalation: mutable boolean = False
+        description: "True once a verified customer has been handed to human escalation."
     is_strategic: mutable boolean = False
         description: "Internal flag from verification. True means a human must handle this customer."
     offer_declined: mutable boolean = False
@@ -67,17 +73,25 @@ start_agent agent_router:
     label: "Agent Router"
     description: "Welcome the customer and route to the right subagent."
 
+    before_reasoning:
+        if @variables.is_strategic == True or @variables.in_escalation == True or @variables.offer_type == "Escalation":
+            transition to @subagent.human_escalation
+        if @variables.in_cancellation == True:
+            transition to @subagent.cancellation_request
+        if @variables.offer_type != "":
+            transition to @subagent.retention_offer
+
     reasoning:
         instructions: ->
             | Pick the tool that best matches the customer's message.
-              Cancel requests, cost complaints and plan or usage questions go to verification.
-              A request for a person, an angry customer or any mention of legal action goes to human escalation.
+              Cancel requests, cost complaints, discount or price requests (for example asking for 50 percent off) and plan or usage questions go to verification.
+              Only a customer who explicitly asks for a person, is angry, or mentions legal action goes to human escalation. Asking for a discount is NOT a reason to escalate.
               Everything else goes to off topic.
         actions:
             go_verify: @utils.transition to @subagent.verify_and_understand
                 description: "Customer wants to cancel, says it is too expensive, or asks about plan, price or usage."
             go_human: @utils.transition to @subagent.human_escalation
-                description: "Customer asks for a person, is angry, or mentions legal action."
+                description: "Only when the customer explicitly asks for a person, is angry, or mentions legal action. Not for discount or price requests."
             go_off_topic: @utils.transition to @subagent.off_topic
                 description: "Anything unrelated to cancellation, pricing or plan fit."
 
@@ -91,9 +105,11 @@ subagent verify_and_understand:
 
     reasoning:
         instructions: ->
-            if @variables.subscription_id == "":
+            if @variables.is_strategic == True:
+                | This customer needs a specialist. Call go_human now and do not discuss offers.
+            if @variables.verified == False:
                 | Ask for the customer's account email, then call Get Customer Subscription.
-                  If it is not found, ask once more for the email. If the second attempt is also not found, tell the customer a team member will follow up and stop. Do not hand off to human escalation because there is no verified subscription.
+                  Every time the customer gives an email you MUST call the lookup tool with it, and never say the customer is verified or confirmed unless the lookup returned found true. If the lookup says not found, ask once more for the email. If a second lookup in this conversation is also not found, tell the customer a team member will follow up and stop asking. Do not hand off to human escalation because there is no verified subscription.
             else:
                 | The customer is verified. Briefly acknowledge their concern and mention their plan and usage using only action results.
                   If the reason is not obvious, ask one short question. Then call Capture Reason with exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other.
@@ -102,14 +118,15 @@ subagent verify_and_understand:
             lookup: @actions.get_customer_subscription
                 with customerEmail = ...
                 set @variables.subscription_id = @outputs.subscriptionId
+                set @variables.verified = @outputs.found
                 set @variables.is_strategic = @outputs.isStrategic
             capture_reason: @utils.setVariables
                 description: "Save the customer's reason for leaving. Must be exactly one of: Too expensive, Not using enough, Missing features, Switching to competitor, Business closing, Other."
-                available when @variables.subscription_id != ""
+                available when @variables.verified == True
                 with reason = ...
             go_offer: @utils.transition to @subagent.retention_offer
                 description: "Move on to the retention offer once the customer is verified and the reason is captured."
-                available when @variables.subscription_id != "" and @variables.reason != ""
+                available when @variables.verified == True and @variables.reason != ""
             go_human: @utils.transition to @subagent.human_escalation
                 description: "Customer asks for a person, is angry, or mentions legal action."
 
@@ -206,6 +223,10 @@ subagent retention_offer:
 
 
 
+    after_reasoning:
+        if @variables.offer_type == "Escalation":
+            transition to @subagent.human_escalation
+
     actions:
         get_retention_options:
             description: "Get the single policy-approved retention option for the verified customer and their reason. Never offer anything this action did not return."
@@ -276,10 +297,13 @@ subagent cancellation_request:
     label: "Cancellation Request"
     description: "Customer declined the offer, the business is closing, or the customer clearly insists on cancelling. Records a cancellation request for a human to process."
 
+    before_reasoning:
+        set @variables.in_cancellation = True
+
     reasoning:
         instructions: ->
             | Confirm the customer really wants to proceed. Explain that a team member will complete the request and that nothing has been cancelled by you.
-              Call Record Cancellation Request only after an explicit yes, with customerConfirmed True. Afterwards say the request is recorded and a team member will follow up. Never say the account is cancelled.
+              Call Record Cancellation Request only after an explicit yes, with customerConfirmed True. Afterwards say the request is recorded and a team member will follow up. If the tool fails, say honestly that it could not be recorded. Never say the account is cancelled.
         actions:
             record_request: @actions.record_cancellation_request
                 with subscriptionId = @variables.subscription_id
@@ -317,15 +341,19 @@ subagent human_escalation:
     label: "Human Escalation"
     description: "High-value or out-of-policy cases, feature or competitor reasons, an angry customer, legal mentions, or a customer who asks for a person."
 
+    before_reasoning:
+        if @variables.verified == True:
+            set @variables.in_escalation = True
+
     reasoning:
         instructions: ->
-            if @variables.subscription_id == "":
+            if @variables.verified == False:
                 | The customer is not verified, so no case can be created. Tell them a team member will follow up, and ask for their account email if they have not given it yet.
             else:
-                | Write a 3 to 5 sentence summary: who the customer is, their plan, why they want to leave, what was offered, and what they said. Call Escalate to Human Agent with it, then share the case number and say a specialist will follow up.
+                | Write a 3 to 5 sentence summary: who the customer is, their plan, why they want to leave, what was offered, and what they said. Call the create_case tool with it. Then reply to the customer directly in the second person (you, your), in 2 short sentences: share the case number and say a specialist will follow up. Do not read the summary aloud. If the tool fails, say honestly that you could not create the case and do not claim that a specialist has been notified.
         actions:
-            escalate: @actions.escalate_to_human_agent
-                available when @variables.subscription_id != ""
+            create_case: @actions.escalate_to_human_agent
+                available when @variables.verified == True
                 with subscriptionId = @variables.subscription_id
                 with reason = ...
                 with conversationSummary = ...

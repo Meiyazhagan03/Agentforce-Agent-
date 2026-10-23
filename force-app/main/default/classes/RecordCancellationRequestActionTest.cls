@@ -20,7 +20,7 @@ private class RecordCancellationRequestActionTest {
         Subscription__c s = [SELECT Id FROM Subscription__c LIMIT 1];
         System.assertEquals(false, call(s.Id, false).success);
         System.assertEquals('Active', RetentionTestDataFactory.reload(s.Id).Status__c);
-        System.assertEquals(0, [SELECT COUNT() FROM Task]);
+        System.assertEquals(0, [SELECT COUNT() FROM Case]);
     }
 
     @IsTest
@@ -34,10 +34,10 @@ private class RecordCancellationRequestActionTest {
         System.assert(call(s.Id, true).success);
         System.assertEquals('Cancel Requested', RetentionTestDataFactory.reload(s.Id).Status__c);
         System.assertEquals('Declined', [SELECT Status__c FROM Retention_Offer__c WHERE Id = :offerId].Status__c);
-        System.assertEquals(1, [SELECT COUNT() FROM Task WHERE Subject LIKE 'Process cancellation request%']);
-        // Repeat is idempotent: no second task.
+        System.assertEquals(1, [SELECT COUNT() FROM Case WHERE Subject LIKE 'Process cancellation request%']);
+        // Repeat is idempotent: no second case.
         System.assert(call(s.Id, true).success);
-        System.assertEquals(1, [SELECT COUNT() FROM Task]);
+        System.assertEquals(1, [SELECT COUNT() FROM Case]);
     }
 
     @IsTest

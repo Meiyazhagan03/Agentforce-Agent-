@@ -58,16 +58,15 @@ public with sharing class RecordCancellationRequestAction {
         if (!open.isEmpty()) {
             update as user open;
         }
-        insert as user new Task(
+        insert as user new Case(
             Subject = 'Process cancellation request: ' + sub.Account__r.Name,
             Description = 'Customer ' + sub.Contact__r.Name + ' confirmed they want to cancel. Reason: ' +
                 RetentionPolicyService.normalizeReason(req.reason) + '.\nCustomer said: ' + (req.customerMessage ?? '') +
-                '\nRenewal date: ' + sub.Renewal_Date__c,
-            WhoId = sub.Contact__c,
-            WhatId = sub.Account__c,
-            ActivityDate = Date.today().addDays(1),
-            Status = 'Not Started',
-            Priority = 'High'
+                '\nRenewal date: ' + sub.Renewal_Date__c + '\nNothing has been cancelled; a team member must process this request.',
+            Priority = 'High',
+            Origin = 'Web',
+            AccountId = sub.Account__c,
+            ContactId = sub.Contact__c
         );
         r.success = true;
         r.message = 'Cancellation request recorded. Nothing is cancelled yet; a team member will complete it.';
