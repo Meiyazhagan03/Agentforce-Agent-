@@ -50,3 +50,6 @@ $RECYCLE.BIN/
 # Contest
 *.mp4
 *.mov
+
+# Agent preview transcripts
+transcripts/
