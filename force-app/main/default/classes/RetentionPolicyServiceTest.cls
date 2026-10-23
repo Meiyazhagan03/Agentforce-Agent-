@@ -45,7 +45,7 @@ private class RetentionPolicyServiceTest {
     static void rule4EscalatingReasons() {
         Subscription__c s = RetentionTestDataFactory.createSubscription('Rule4', 'Lumio Growth', 99, new List<Integer>{ 1100, 1000, 1200 });
         for (String reason : new List<String>{ 'Missing features', 'Switching to competitor', 'Other', 'gibberish', null }) {
-            System.assertEquals('Escalation', eval(s, reason).offerType, String.valueOf(reason));
+            System.assertEquals('Escalation', eval(s, reason).offerType, 'reason=' + reason);
         }
     }
 
