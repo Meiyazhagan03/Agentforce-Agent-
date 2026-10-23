@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Monthly_Price__c</fullName>
+    <description>What the customer pays now, after any discount.</description>
+    <externalId>false</externalId>
+    <label>Monthly Price</label>
+    <precision>10</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>
